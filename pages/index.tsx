@@ -1,10 +1,10 @@
 
-import HeroSection from "@/components/HeroSection";
-import UploadCard from "@/components/UploadCard";
-import LanguageSelector from "@/components/LanguageSelector";
-import ProgressLoader from "@/components/ProgressLoader";
-import InspirationSection from "@/components/InspirationSection";
-import Footer from "@/components/Footer";
+import HeroSection from "../components/HeroSection";
+import UploadCard from "../components/UploadCard";
+import LanguageSelector from "../components/LanguageSelector";
+import ProgressLoader from "../components/ProgressLoader";
+import InspirationSection from "../components/InspirationSection";
+import Footer from "../components/Footer";
 import { useState } from "react";
 
 export default function Home() {
