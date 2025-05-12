@@ -22,7 +22,7 @@ export default function Home() {
   return (
     <div>
       <HeroSection />
-      <main className="max-w-4xl mx-auto px-4">
+      <main className="max-w-4xl mx-auto px-4 bg-red-200">
         <UploadCard />
         <LanguageSelector />
         <button
