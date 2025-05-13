@@ -1,11 +1,19 @@
+interface ProgressLoaderProps {
+  progress: number;
+}
 
-import { useState } from 'react';
+export default function ProgressLoader({ progress }: ProgressLoaderProps) {
+  return (
+    <div className="mt-6">
+      <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+        <div
+          className="h-full bg-brand transition-all duration-500 ease-out"
+          style={{ width: `${progress}%` }}
+        ></div>
+      </div>
+      <p className="text-sm text-center text-subtle mt-2">{progress}% completed</p>
+    </div>
+  );
+}
 
-const ProgressLoader = ({ progress }: { progress: number }) => (
-  <div className="w-full bg-gray-200 rounded-full h-4 my-6">
-    <div className="bg-black h-4 rounded-full transition-all" style={{ width: `${progress}%` }} />
-    <p className="text-center mt-2 text-gray-500">{progress}% completed</p>
-  </div>
-);
 
-export default ProgressLoader;

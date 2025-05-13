@@ -1,9 +1,13 @@
+export default function HeroSection() {
+  return (
+    <section className="w-full py-20 text-center">
+      <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900">
+        Effortless Document Translation
+      </h1>
+      <p className="mt-4 text-lg text-gray-600">
+        Instantly translate your documents with AI precision
+      </p>
+    </section>
+  );
+}
 
-const HeroSection = () => (
-  <section className="text-center py-20 bg-gradient-to-b from-white to-gray-50">
-    <h1 className="text-5xl font-bold mb-4">Effortless Document Translation</h1>
-    <p className="text-xl text-gray-600">Instantly translate your documents with AI precision</p>
-  </section>
-);
-
-export default HeroSection;

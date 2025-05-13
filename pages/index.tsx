@@ -1,11 +1,15 @@
-
+import Navbar from "../components/Navbar";
 import HeroSection from "../components/HeroSection";
 import UploadCard from "../components/UploadCard";
 import LanguageSelector from "../components/LanguageSelector";
 import ProgressLoader from "../components/ProgressLoader";
-import InspirationSection from "../components/InspirationSection";
+import AboutSection from "../components/AboutSection";
 import Footer from "../components/Footer";
+
 import { useState } from "react";
+
+// Heroicons v2 imports
+import { GlobeAltIcon, BoltIcon, DevicePhoneMobileIcon } from "@heroicons/react/24/outline";
 
 export default function Home() {
   const [progress, setProgress] = useState(0);
@@ -20,20 +24,49 @@ export default function Home() {
   };
 
   return (
-    <div>
+    <div className="min-h-screen flex flex-col bg-white text-gray-900">
+      <Navbar />
       <HeroSection />
-      <main className="max-w-4xl mx-auto px-4 bg-red-200">
+
+      <main className="w-full max-w-4xl px-4 py-10 space-y-6 mx-auto">
         <UploadCard />
         <LanguageSelector />
+
         <button
           onClick={handleTranslate}
-          className="w-full bg-black text-white py-3 rounded-md mt-4 hover:bg-gray-800 transition"
+          className="w-full bg-black text-white py-3 rounded-md hover:scale-105 hover:bg-gray-800 transition transform duration-200 ease-out"
         >
           Translate Document
         </button>
+
         <ProgressLoader progress={progress} />
       </main>
-      <InspirationSection />
+
+      <section className="mt-16 mb-24 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+        <div className="flex flex-col items-center">
+          <GlobeAltIcon className="h-10 w-10 text-brand mb-4" />
+          <h3 className="font-semibold text-lg mb-2">Global Reach</h3>
+          <p className="text-sm text-gray-600">
+            Expand your business by making content accessible in multiple languages.
+          </p>
+        </div>
+        <div className="flex flex-col items-center">
+          <BoltIcon className="h-10 w-10 text-brand mb-4" />
+          <h3 className="font-semibold text-lg mb-2">AI-Powered Speed</h3>
+          <p className="text-sm text-gray-600">
+            Instantly translate documents with AI precision for fast, reliable results.
+          </p>
+        </div>
+        <div className="flex flex-col items-center">
+          <DevicePhoneMobileIcon className="h-10 w-10 text-brand mb-4" />
+          <h3 className="font-semibold text-lg mb-2">Seamless Workflow</h3>
+          <p className="text-sm text-gray-600">
+            Upload, translate, and download your files effortlessly — hassle-free.
+          </p>
+        </div>
+      </section>
+
+      <AboutSection />
       <Footer />
     </div>
   );
