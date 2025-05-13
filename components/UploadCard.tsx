@@ -1,14 +1,15 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 
 export default function UploadCard({ onProgress }: { onProgress: (p: number) => void }) {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
-    if (e.dataTransfer.files[0]) {
+    if (e.dataTransfer.files?.[0]) {
       setFile(e.dataTransfer.files[0]);
     }
   }, []);
@@ -42,7 +43,6 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
       setLoading(true);
       onProgress(0);
 
-      // Fake progress
       let p = 0;
       const fakeProgress = setInterval(() => {
         p += 10;
@@ -50,20 +50,17 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
         if (p >= 90) clearInterval(fakeProgress);
       }, 300);
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/translate`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/translate/`, {
         method: 'POST',
         body: formData,
       });
 
       clearInterval(fakeProgress);
 
-      if (!response.ok) {
-        throw new Error('Translation failed');
-      }
+      if (!response.ok) throw new Error('Translation failed');
 
       const contentType = response.headers.get('content-type');
 
-      // Case 1: API returns JSON with file_url
       if (contentType?.includes('application/json')) {
         const data = await response.json();
         if (data.file_url) {
@@ -72,13 +69,11 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
           alert('No file_url returned from server.');
         }
       } else {
-        // Case 2: API returns blob file (pdf/docx/txt)
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
 
         const contentDisposition = response.headers.get('content-disposition');
         let filename = 'translated_document';
-
         const match = contentDisposition?.match(/filename="?(.+)"?/);
         if (match?.[1]) {
           filename = match[1];
@@ -96,7 +91,6 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
       }
 
       onProgress(100);
-
     } catch (error) {
       console.error(error);
       alert('Translation failed. Check console.');
@@ -110,7 +104,7 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
     <div className="w-full flex justify-center">
       <div>
         <div
-          className={`w-full max-w-xl mx-auto p-6 rounded-2xl shadow-soft border-2 border-dashed text-center ${
+          className={`w-full max-w-xl mx-auto p-6 rounded-2xl shadow-soft border-2 border-dashed text-center relative ${
             isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
           }`}
           onDrop={handleDrop}
@@ -120,13 +114,22 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
           <p className="text-subtle text-sm mb-4">
             {file ? `Selected file: ${file.name}` : 'Click or drag & drop your .docx, .pdf, or .txt file'}
           </p>
-          <input type="file" onChange={handleFileChange} className="hidden" id="fileUpload" />
-          <label
-            htmlFor="fileUpload"
-            className="inline-block bg-black text-white px-6 py-2 rounded-md cursor-pointer hover:bg-gray-800 transition"
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            onChange={handleFileChange}
+            id="fileUpload"
+            className="absolute inset-0 opacity-0 cursor-pointer"
+          />
+
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="inline-block bg-black text-white px-6 py-2 rounded-md hover:bg-gray-800 transition"
           >
             Choose File
-          </label>
+          </button>
         </div>
 
         <button
@@ -140,6 +143,7 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
     </div>
   );
 }
+
 
 
 
