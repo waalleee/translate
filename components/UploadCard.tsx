@@ -42,7 +42,7 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
       setLoading(true);
       onProgress(0);
 
-      // Fake progress animation
+      // Fake progress
       let p = 0;
       const fakeProgress = setInterval(() => {
         p += 10;
@@ -61,29 +61,30 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
         throw new Error('Translation failed');
       }
 
-      // Try JSON first (if file_url returned)
       const contentType = response.headers.get('content-type');
+
+      // Case 1: API returns JSON with file_url
       if (contentType?.includes('application/json')) {
         const data = await response.json();
         if (data.file_url) {
-          // Download via URL
           window.open(data.file_url, '_blank');
         } else {
-          alert('No file URL returned from server.');
+          alert('No file_url returned from server.');
         }
       } else {
-        // If not JSON, assume it's a blob (file download)
+        // Case 2: API returns blob file (pdf/docx/txt)
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
 
         const contentDisposition = response.headers.get('content-disposition');
         let filename = 'translated_document';
 
-        if (contentDisposition) {
-          const match = contentDisposition.match(/filename="?(.+)"?/);
-          if (match?.[1]) {
-            filename = match[1];
-          }
+        const match = contentDisposition?.match(/filename="?(.+)"?/);
+        if (match?.[1]) {
+          filename = match[1];
+        } else if (file.name) {
+          const ext = file.name.split('.').pop();
+          filename = `translated_document.${ext}`;
         }
 
         const link = document.createElement('a');
@@ -95,6 +96,7 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
       }
 
       onProgress(100);
+
     } catch (error) {
       console.error(error);
       alert('Translation failed. Check console.');
@@ -119,7 +121,10 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
             {file ? `Selected file: ${file.name}` : 'Click or drag & drop your .docx, .pdf, or .txt file'}
           </p>
           <input type="file" onChange={handleFileChange} className="hidden" id="fileUpload" />
-          <label htmlFor="fileUpload" className="inline-block bg-black text-white px-6 py-2 rounded-md cursor-pointer hover:bg-gray-800 transition">
+          <label
+            htmlFor="fileUpload"
+            className="inline-block bg-black text-white px-6 py-2 rounded-md cursor-pointer hover:bg-gray-800 transition"
+          >
             Choose File
           </label>
         </div>
@@ -135,6 +140,7 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
     </div>
   );
 }
+
 
 
 
