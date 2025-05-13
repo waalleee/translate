@@ -110,6 +110,7 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
+          onClick={() => fileInputRef.current?.click()} // <-- NYTT
         >
           <p className="text-subtle text-sm mb-4">
             {file ? `Selected file: ${file.name}` : 'Click or drag & drop your .docx, .pdf, or .txt file'}
@@ -143,7 +144,6 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
     </div>
   );
 }
-
 
 
 
