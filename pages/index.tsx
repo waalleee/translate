@@ -12,17 +12,23 @@ import { GlobeAltIcon, BoltIcon, DevicePhoneMobileIcon } from "@heroicons/react/
 export default function Home() {
   const [progress, setProgress] = useState(0);
 
-  return (
+ return (
+  <>
     <div className="min-h-screen flex flex-col bg-white text-gray-900">
       <Navbar />
       <HeroSection />
 
       <main className="w-full max-w-4xl px-4 py-10 space-y-6 mx-auto">
-  <UploadCard onProgress={setProgress} />
-  <LanguageSelector />
-  <button ...>Translate Document</button>
-  <ProgressLoader progress={progress} />
-</main>
+        <UploadCard onProgress={setProgress} />
+        <LanguageSelector />
+        <button
+          onClick={handleTranslate}
+          className="w-full bg-black text-white py-3 rounded-md hover:scale-105 hover:bg-gray-800 transition transform duration-200 ease-out"
+        >
+          Translate Document
+        </button>
+        <ProgressLoader progress={progress} />
+      </main>
 
       <section className="mt-16 mb-24 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
         <div className="flex flex-col items-center">
@@ -51,5 +57,6 @@ export default function Home() {
       <AboutSection />
       <Footer />
     </div>
-  );
-}
+  </>
+);
+
