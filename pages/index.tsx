@@ -5,7 +5,6 @@ import UploadCard from "../components/UploadCard";
 import ProgressLoader from "../components/ProgressLoader";
 import AboutSection from "../components/AboutSection";
 import Footer from "../components/Footer";
-import LanguageSelector from "../components/LanguageSelector";
 
 import { GlobeAltIcon, BoltIcon, DevicePhoneMobileIcon } from "@heroicons/react/24/outline";
 
@@ -20,7 +19,6 @@ export default function Home() {
 
         <main className="w-full max-w-4xl px-4 py-10 space-y-6 mx-auto">
           <UploadCard onProgress={setProgress} />
-          <LanguageSelector />
           <ProgressLoader progress={progress} />
         </main>
 
@@ -54,4 +52,3 @@ export default function Home() {
     </>
   );
 }
-
