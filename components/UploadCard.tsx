@@ -1,9 +1,12 @@
 import { useState, useCallback, useRef } from 'react';
+import languageMap from './languageMap';
 
 export default function UploadCard({ onProgress }: { onProgress: (p: number) => void }) {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [sourceLang, setSourceLang] = useState("Detect Language");
+  const [targetLang, setTargetLang] = useState("English");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
@@ -38,6 +41,14 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
 
     const formData = new FormData();
     formData.append('file', file);
+
+    const targetCode = languageMap[targetLang] || 'EN';
+    formData.append('target_lang', targetCode);
+
+    if (sourceLang !== "Detect Language") {
+      const sourceCode = languageMap[sourceLang];
+      formData.append('source_lang', sourceCode);
+    }
 
     try {
       setLoading(true);
@@ -110,7 +121,7 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
-          onClick={() => fileInputRef.current?.click()} // <-- NYTT
+          onClick={() => fileInputRef.current?.click()}
         >
           <p className="text-subtle text-sm mb-4">
             {file ? `Selected file: ${file.name}` : 'Click or drag & drop your .docx, .pdf, or .txt file'}
@@ -131,6 +142,30 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
           >
             Choose File
           </button>
+        </div>
+
+        <div className="mt-4 flex gap-4">
+          <select
+            value={sourceLang}
+            onChange={(e) => setSourceLang(e.target.value)}
+            className="w-1/2 border px-2 py-1 rounded-md"
+          >
+            {Object.keys(languageMap).map((lang) => (
+              <option key={lang}>{lang}</option>
+            ))}
+          </select>
+
+          <select
+            value={targetLang}
+            onChange={(e) => setTargetLang(e.target.value)}
+            className="w-1/2 border px-2 py-1 rounded-md"
+          >
+            {Object.keys(languageMap)
+              .filter((lang) => lang !== "Detect Language")
+              .map((lang) => (
+                <option key={lang}>{lang}</option>
+              ))}
+          </select>
         </div>
 
         <button
