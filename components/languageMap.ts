@@ -1,4 +1,5 @@
 const languageMap: { [key: string]: string } = {
+  "Detect Language": "",
   English: "EN",
   Swedish: "SV",
   Turkish: "TR",
@@ -34,7 +35,7 @@ const languageMap: { [key: string]: string } = {
   Vietnamese: "VI",
   Hindi: "HI",
   Thai: "TH",
- 
 };
 
 export default languageMap;
+

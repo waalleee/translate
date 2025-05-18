@@ -33,6 +33,13 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
     }
   };
 
+  const resetState = () => {
+    setFile(null);
+    setSourceLang("Detect Language");
+    setTargetLang("English");
+    onProgress(0);
+  };
+
   const handleTranslate = async () => {
     if (!file) {
       alert('Please select a file first.');
@@ -41,32 +48,32 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
 
     const formData = new FormData();
     formData.append('file', file);
-
-    const targetCode = languageMap[targetLang] || 'EN';
-    formData.append('target_lang', targetCode);
+    formData.append('target_lang', languageMap[targetLang] || 'EN');
 
     if (sourceLang !== "Detect Language") {
-      const sourceCode = languageMap[sourceLang];
-      formData.append('source_lang', sourceCode);
+      formData.append('source_lang', languageMap[sourceLang]);
     }
 
     try {
       setLoading(true);
       onProgress(0);
 
-      let p = 0;
-      const fakeProgress = setInterval(() => {
-        p += 10;
-        onProgress(p);
-        if (p >= 90) clearInterval(fakeProgress);
-      }, 300);
+      let currentProgress = 0;
+      const progressInterval = setInterval(() => {
+        currentProgress += Math.floor(Math.random() * 3) + 1;
+        if (currentProgress < 99) {
+          onProgress(currentProgress);
+        } else {
+          clearInterval(progressInterval);
+        }
+      }, 150);
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/translate/`, {
         method: 'POST',
         body: formData,
       });
 
-      clearInterval(fakeProgress);
+      clearInterval(progressInterval);
 
       if (!response.ok) throw new Error('Translation failed');
 
@@ -102,13 +109,7 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
       }
 
       onProgress(100);
-
-      // 🧼 Reset
-      setFile(null);
-      setSourceLang("Detect Language");
-      setTargetLang("English");
-      onProgress(0);
-
+      setTimeout(resetState, 1500); // låt 100% visas en stund
     } catch (error) {
       console.error(error);
       alert('Translation failed. Check console.');
@@ -120,17 +121,15 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
 
   return (
     <div className="w-full flex justify-center">
-      <div>
+      <div className="w-full max-w-xl">
         <div
-          className={`w-full max-w-xl mx-auto p-6 rounded-2xl shadow-soft border-2 border-dashed text-center relative ${
-            isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
-          }`}
+          className={`p-6 rounded-2xl shadow-soft border-2 border-dashed text-center relative transition-all ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300'}`}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onClick={() => fileInputRef.current?.click()}
         >
-          <p className="text-subtle text-sm mb-4">
+          <p className="text-subtle text-sm mb-4 truncate">
             {file ? `Selected file: ${file.name}` : 'Click or drag & drop your .docx, .pdf, or .txt file'}
           </p>
 
@@ -138,14 +137,12 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
             ref={fileInputRef}
             type="file"
             onChange={handleFileChange}
-            id="fileUpload"
             className="absolute inset-0 opacity-0 cursor-pointer"
           />
 
           <button
             type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="inline-block bg-black text-white px-6 py-2 rounded-md hover:bg-gray-800 transition"
+            className="inline-block w-40 bg-black text-white px-6 py-2 rounded-md hover:bg-gray-800 transition"
           >
             Choose File
           </button>
@@ -155,7 +152,7 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
           <select
             value={sourceLang}
             onChange={(e) => setSourceLang(e.target.value)}
-            className="w-1/2 border px-2 py-1 rounded-md"
+            className="w-1/2 min-w-[150px] border px-2 py-1 rounded-md"
           >
             {Object.keys(languageMap).map((lang) => (
               <option key={lang}>{lang}</option>
@@ -165,7 +162,7 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
           <select
             value={targetLang}
             onChange={(e) => setTargetLang(e.target.value)}
-            className="w-1/2 border px-2 py-1 rounded-md"
+            className="w-1/2 min-w-[150px] border px-2 py-1 rounded-md"
           >
             {Object.keys(languageMap)
               .filter((lang) => lang !== "Detect Language")
@@ -177,7 +174,7 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
 
         <button
           onClick={handleTranslate}
-          className="w-full mt-4 bg-black text-white px-6 py-2 rounded-md hover:bg-gray-800 transition"
+          className="w-full mt-4 min-w-[160px] bg-black text-white px-6 py-2 rounded-md hover:bg-gray-800 transition"
           disabled={loading}
         >
           {loading ? 'Translating...' : 'Translate Document'}
@@ -186,6 +183,5 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
     </div>
   );
 }
-
 
 
