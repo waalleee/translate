@@ -102,6 +102,13 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
       }
 
       onProgress(100);
+
+      // 🧼 Reset
+      setFile(null);
+      setSourceLang("Detect Language");
+      setTargetLang("English");
+      onProgress(0);
+
     } catch (error) {
       console.error(error);
       alert('Translation failed. Check console.');
@@ -179,10 +186,6 @@ export default function UploadCard({ onProgress }: { onProgress: (p: number) => 
     </div>
   );
 }
-
-
-
-
 
 
 
